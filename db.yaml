@@ -1,66 +1,91 @@
-# データベース関連の設定と構造
-prisma:
-  schema.prisma:
-    role: "データベーススキーマ"
-    description: "データモデルとデータベース設定"
-    models:
-      User:
-        fields:
-          - "id: String @id @default(uuid())"
-          - "email: String @unique"
-          - "password: String"
-          - "name: String"
-          - "todos: Todo[]"
-          - "history: TaskHistory[]"
-          - "createdAt: DateTime @default(now())"
-          - "updatedAt: DateTime @updatedAt"
-      
-      Todo:
-        fields:
-          - "id: String @id @default(uuid())"
-          - "title: String"
-          - "completed: Boolean @default(false)"
-          - "userId: String"
-          - "user: User @relation(fields: [userId], references: [id])"
-          - "history: TaskHistory[]"
-          - "createdAt: DateTime @default(now())"
-          - "updatedAt: DateTime @updatedAt"
-        indexes:
-          - fields: [userId]
+# データベース定義
+database:
+  provider: "postgresql"
+  url: ${env:DATABASE_URL}
 
-      TaskHistory:
-        fields:
-          - "id: String @id @default(cuid())"
-          - "todoId: String"
-          - "todo: Todo @relation(fields: [todoId], references: [id])"
-          - "action: String"
-          - "title: String"
-          - "completed: Boolean"
-          - "userId: String"
-          - "user: User @relation(fields: [userId], references: [id])"
-          - "createdAt: DateTime @default(now())"
-        indexes:
-          - fields: [todoId]
-          - fields: [userId]
+models:
+  User:
+    fields:
+      id: String @id @default(cuid())
+      name: String?
+      email: String? @unique
+      emailVerified: DateTime?
+      password: String?
+      image: String?
+      createdAt: DateTime @default(now())
+      updatedAt: DateTime @updatedAt
+      accounts: Account[]
+      sessions: Session[]
+      todos: Todo[]
+      taskHistories: TaskHistory[]
 
-  migrations:
-    init:
-      role: "初期マイグレーション"
-      description: "データベース初期構造の作成"
-      changes:
-        - "User テーブルの作成"
-        - "基本的なフィールドの設定"
+  Account:
+    fields:
+      id: String @id @default(cuid())
+      userId: String
+      type: String
+      provider: String
+      providerAccountId: String
+      refresh_token: String?
+      access_token: String?
+      expires_at: Int?
+      token_type: String?
+      scope: String?
+      id_token: String?
+      session_state: String?
+      user: User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    indexes:
+      - [provider, providerAccountId]
 
-    add_user:
-      role: "ユーザー機能の追加"
-      description: "ユーザー関連フィールドの追加"
-      changes:
-        - "認証関連フィールドの追加"
-        - "ユーザープロフィール情報の追加"
+  Session:
+    fields:
+      id: String @id @default(cuid())
+      sessionToken: String @unique
+      userId: String
+      expires: DateTime
+      user: User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    add_relations:
-      role: "リレーション追加"
-      description: "UserとTodoの関連付け"
-      changes:
-        - "TodoテーブルにuserIdフィールド追加"
-        - "UserとTodoのリレーション設定" 
+  Todo:
+    fields:
+      id: String @id @default(cuid())
+      title: String
+      completed: Boolean @default(false)
+      userId: String
+      createdAt: DateTime @default(now())
+      updatedAt: DateTime @updatedAt
+      user: User @relation(fields: [userId], references: [id], onDelete: Cascade)
+      taskHistories: TaskHistory[]
+
+  TaskHistory:
+    fields:
+      id: String @id @default(cuid())
+      todoId: String
+      action: String
+      title: String
+      completed: Boolean
+      userId: String
+      createdAt: DateTime @default(now())
+      todo: Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
+      user: User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+migrations:
+  - name: "init"
+    description: "初期スキーマ作成"
+    changes:
+      - "User, Account, Session, Todoテーブルの作成"
+      - "関連するインデックスの作成"
+
+  - name: "add_task_history"
+    description: "タスク履歴機能の追加"
+    changes:
+      - "TaskHistoryテーブルの作成"
+      - "TodoテーブルとTaskHistoryテーブルの関連付け"
+
+security:
+  authentication:
+    - "メールアドレスとパスワードによる認証"
+    - "OAuth (GitHub, Google) による認証"
+  
+  authorization:
+    - "ユーザーは自身のTodoのみアクセス可能"
+    - "Todo操作は認証済みユーザーのみ許可" 

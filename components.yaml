@@ -1,103 +1,88 @@
-# コンポーネント定義と依存関係
+# コンポーネント定義
 components:
-  ui:
-    button.tsx:
-      role: "汎用ボタンコンポーネント"
-      description: "アプリケーション全体で使用するボタン"
-      dependencies:
-        - "@/lib/utils"
-
-    input.tsx:
-      role: "汎用入力フィールド"
-      description: "テキスト入力用コンポーネント"
-      dependencies:
-        - "@/lib/utils"
-
-    checkbox.tsx:
-      role: "チェックボックス"
-      description: "Todo完了状態の切り替えなどに使用"
-      dependencies:
-        - "@/lib/utils"
-
-    dialog.tsx:
-      role: "モーダルダイアログ"
-      description: "確認ダイアログやフォーム表示用"
-      dependencies:
-        - "@/lib/utils"
-
   todo:
     todo-list.tsx:
-      role: "Todoリスト表示"
+      role: "Todoリスト"
       description: "Todoアイテムの一覧表示"
       dependencies:
-        - "@/components/todo/todo-item"
-        - "@/hooks/useTodos"
-        - "@/types/todo"
-
-    todo-item.tsx:
-      role: "Todo個別アイテム"
-      description: "単一のTodoアイテムの表示と操作"
-      dependencies:
-        - "@/components/ui/checkbox"
-        - "@/components/ui/button"
-        - "@/types/todo"
+        - "@/types"
+        - "./todo-filter"
+        - "react"
 
     todo-form.tsx:
-      role: "Todo作成フォーム"
-      description: "新規Todo作成用フォーム"
+      role: "Todo入力フォーム"
+      description: "新規Todo作成フォーム"
       dependencies:
         - "@/components/ui/input"
         - "@/components/ui/button"
-        - "@/services/todoService"
 
     todo-filter.tsx:
       role: "Todoフィルター"
       description: "Todo一覧のフィルタリング機能"
       dependencies:
-        - "@/components/ui/checkbox"
-        - "@/hooks/useTodos"
+        - "@/types"
+        - "react"
 
-  layout:
-    header.tsx:
-      role: "ヘッダーコンポーネント"
-      description: "サイト共通ヘッダー"
+    todo-item.tsx:
+      role: "Todoアイテム"
+      description: "個別のTodoアイテム表示"
       dependencies:
+        - "@/components/ui/checkbox"
         - "@/components/ui/button"
-        - "@/services/authService"
 
-    footer.tsx:
-      role: "フッターコンポーネント"
-      description: "サイト共通フッター"
+    todo-history.tsx:
+      role: "Todo履歴"
+      description: "Todoの変更履歴表示"
+      dependencies:
+        - "@/types"
+        - "@/components/ui/dialog"
+
+  ui:
+    button.tsx:
+      role: "ボタン"
+      description: "カスタムボタンコンポーネント"
       dependencies:
         - "@/lib/utils"
+        - "class-variance-authority"
 
-    auth:
-      auth-form.tsx:
-        role: "認証フォーム"
-        description: "ログイン・サインアップ共通フォーム"
-        dependencies:
-          - "@/components/ui/input"
-          - "@/components/ui/button"
-          - "@/services/authService"
-          - "@/lib/utils"
+    input.tsx:
+      role: "入力フィールド"
+      description: "カスタム入力フィールド"
+      dependencies:
+        - "@/lib/utils"
+        - "class-variance-authority"
 
-      oauth-buttons.tsx:
-        role: "OAuthボタン群"
-        description: "ソーシャルログインボタン"
-        dependencies:
-          - "@/components/ui/button"
-          - "@/services/authService"
+    checkbox.tsx:
+      role: "チェックボックス"
+      description: "カスタムチェックボックス"
+      dependencies:
+        - "@/lib/utils"
+        - "class-variance-authority"
 
-      auth-status.tsx:
-        role: "認証状態表示"
-        description: "現在のログイン状態とユーザー情報の表示"
-        dependencies:
-          - "@/components/ui/avatar"
-          - "@/services/authService"
+    card.tsx:
+      role: "カード"
+      description: "カードUIコンポーネント"
+      dependencies:
+        - "@/lib/utils"
+        - "class-variance-authority"
 
-      protected-route.tsx:
-        role: "保護されたルート"
-        description: "認証が必要なページのラッパーコンポーネント"
-        dependencies:
-          - "@/services/authService"
-          - "@/lib/utils" 
+    dialog.tsx:
+      role: "ダイアログ"
+      description: "モーダルダイアログ"
+      dependencies:
+        - "@/lib/utils"
+        - "@radix-ui/react-dialog"
+
+    form.tsx:
+      role: "フォーム"
+      description: "フォームコンポーネント"
+      dependencies:
+        - "@/lib/utils"
+        - "@radix-ui/react-form"
+
+    label.tsx:
+      role: "ラベル"
+      description: "フォームラベル"
+      dependencies:
+        - "@/lib/utils"
+        - "@radix-ui/react-label" 

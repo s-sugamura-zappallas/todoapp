@@ -4,66 +4,86 @@ app:
     role: "ルートレイアウト"
     description: "全ページ共通のレイアウトを定義"
     dependencies:
-      - "@/components/layout/header"
-      - "@/components/layout/footer"
-      - "@/lib/utils"
-  
+      - "next/font/google"
+      - "./globals.css"
+
   page.tsx:
     role: "トップページ"
-    description: "アプリケーションのメインページ"
+    description: "認証状態に基づくリダイレクト制御"
     dependencies:
-      - "@/components/todo/todo-list"
-      - "@/components/todo/todo-form"
-      - "@/hooks/useTodos"
+      - "next-auth"
+      - "next/navigation"
+      - "./api/auth/[...nextauth]/route"
 
-  error.tsx:
-    role: "エラーページ"
-    description: "エラー発生時の表示画面"
-    dependencies:
-      - "@/components/ui/button"
+  (authenticated):
+    todos/page.tsx:
+      role: "Todoリストページ"
+      description: "認証済みユーザーのTodo管理画面"
+      dependencies:
+        - "@/components/todo/todo-list"
+        - "@/components/todo/todo-form"
+        - "next-auth"
+        - "@prisma/client"
+        - "./actions"
 
-  loading.tsx:
-    role: "ローディングUI"
-    description: "ページ読み込み中の表示"
-    dependencies:
-      - "@/components/ui/loading"
+    todos/page.client.tsx:
+      role: "Todoリストクライアントコンポーネント"
+      description: "Todoリストのクライアントサイド実装"
+      dependencies:
+        - "@/components/todo/todo-list"
+        - "@/components/todo/todo-form"
+        - "./actions"
+        - "@prisma/client"
+
+    todos/actions.ts:
+      role: "Todoアクション"
+      description: "TodoのCRUD操作とサーバーアクション"
+      dependencies:
+        - "@/lib/prisma"
+        - "next-auth"
+        - "next/cache"
 
   api:
-    todos/route.ts:
-      role: "Todo CRUD API"
-      description: "TodoのRESTful API実装"
+    auth/[...nextauth]/route.ts:
+      role: "NextAuth設定"
+      description: "認証プロバイダーと認証ロジックの設定"
       dependencies:
-        - "@/services/todoService"
-        - "@/utils/validation"
-        - "@/types/todo"
-    
-    auth/route.ts:
-      role: "認証 API"
-      description: "認証関連のAPI実装"
+        - "next-auth"
+        - "@auth/prisma-adapter"
+        - "@/lib/prisma"
+        - "next-auth/providers/*"
+        - "bcryptjs"
+
+    auth/signup/route.ts:
+      role: "サインアップAPI"
+      description: "ユーザー登録処理のAPI実装"
       dependencies:
-        - "@/services/authService"
-        - "@/utils/jwt"
-        - "@/types/auth"
+        - "next/server"
+        - "bcryptjs"
+        - "@/lib/prisma"
+        - "@/lib/utils"
 
   auth:
+    layout.tsx:
+      role: "認証レイアウト"
+      description: "認証ページの共通レイアウトと認証制御"
+      dependencies:
+        - "next-auth"
+        - "next/navigation"
+
     login/page.tsx:
       role: "ログインページ"
-      description: "ユーザーログイン画面"
+      description: "ユーザーログインフォーム"
       dependencies:
-        - "@/components/ui/input"
-        - "@/components/ui/button"
-        - "@/services/authService"
+        - "next-auth/react"
+        - "next/navigation"
+        - "@/components/ui/*"
+        - "react-icons/*"
 
     signup/page.tsx:
       role: "サインアップページ"
-      description: "ユーザー登録画面"
+      description: "ユーザー登録フォーム"
       dependencies:
-        - "@/components/ui/input"
-        - "@/components/ui/button"
-        - "@/services/authService"
-
-    layout.tsx:
-      role: "認証ページレイアウト"
-      description: "認証関連ページの共通レイアウト"
-      dependencies:
-        - "@/components/layout/header" 
+        - "next/navigation"
+        - "@/components/ui/*"
+        - "@/lib/utils"

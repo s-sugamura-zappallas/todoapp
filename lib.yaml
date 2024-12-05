@@ -1,69 +1,78 @@
 # ユーティリティ、フック、サービス層の定義
 lib:
+  prisma.ts:
+    role: "Prismaクライアント"
+    description: "データベース接続とクライアント初期化"
+    dependencies:
+      - "@prisma/client"
+
   utils.ts:
-    role: "共通ユーティリティ関数"
-    description: "汎用的なヘルパー関数群"
+    role: "ユーティリティ関数"
+    description: "共通ヘルパー関数群"
     exports:
-      - "classNames"
-      - "formatDate"
-      - "validateInput"
-
-hooks:
-  useTodos.ts:
-    role: "Todo操作カスタムフック"
-    description: "Todoの取得・更新ロジック"
+      - "cn: クラス名結合ユーティリティ"
+      - "isValidEmail: メールアドレス検証"
     dependencies:
-      - "@/services/todoService"
-      - "@/types/todo"
-
-services:
-  todoService.ts:
-    role: "Todoサービス"
-    description: "TodoのCRUD操作とAPI通信"
-    dependencies:
-      - "@/types/todo"
-      - "@/utils/validation"
-      - "@prisma/client"
-
-  authService.ts:
-    role: "認証サービス"
-    description: "ユーザー認証関連の処理"
-    dependencies:
-      - "@/types/auth"
-      - "@/utils/jwt"
-      - "@prisma/client"
-
-utils:
-  jwt.ts:
-    role: "JWT処理"
-    description: "JWTの生成と検証"
-    dependencies:
-      - "jsonwebtoken"
-
-  validation.ts:
-    role: "バリデーション"
-    description: "入力値の検証ロジック"
-    dependencies:
-      - "zod"
+      - "clsx"
+      - "tailwind-merge"
 
 types:
-  todo.ts:
-    role: "Todo型定義"
-    description: "Todo関連の型定義"
-    dependencies:
-      - "@prisma/client"
-
   auth.ts:
     role: "認証型定義"
     description: "認証関連の型定義"
-    dependencies:
-      - "@prisma/client"
+    exports:
+      - "User"
+      - "LoginInput"
+      - "SignupInput"
+      - "AuthResponse"
+      - "AuthError"
+
+  todo.ts:
+    role: "Todo型定義"
+    description: "Todo関連の型定義"
+    exports:
+      - "Todo"
+      - "TodoInput"
+      - "TodoFilter"
+
+  next-auth.d.ts:
+    role: "NextAuth型拡張"
+    description: "NextAuthのデフォルト型の拡張"
+    exports:
+      - "User: カスタムユーザー型"
+      - "Session: カスタムセッション型"
+
+config:
+  env.ts:
+    role: "環境変数"
+    description: "環境変数の型安全な管理"
+    exports:
+      - "環境変数の検証と型付け"
 
 dependencies:
-  next: "15.0.3"
-  # その他の依存関係...
+  next: "14.0.4"
+  react: "18.2.0"
+  react-dom: "18.2.0"
+  next-auth: "4.24.5"
+  prisma: "5.7.0"
+  "@prisma/client": "5.7.0"
+  typescript: "5.3.3"
+  tailwindcss: "3.3.6"
+  shadcn-ui: "latest"
 
 configurations:
-  swc:
-    enabled: true
-    minify: true 
+  typescript:
+    strict: true
+    target: "es2017"
+  
+  prisma:
+    provider: "postgresql"
+    previewFeatures: ["referentialActions"]
+  
+  tailwind:
+    content: ["./src/**/*.{ts,tsx}"]
+    darkMode: "class"
+  
+  nextAuth:
+    providers: ["github", "google", "credentials"]
+    adapter: "@auth/prisma-adapter"

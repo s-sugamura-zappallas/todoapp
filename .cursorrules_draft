@@ -1,0 +1,54 @@
+下記依存関係にあるので下層のファイルを変更した場合は上層のファイルも変更する
+新しいディレクトリ、ファイルを追加した場合はstructure.yamlに追加すること
+作業が終わったらwork_history.yamlを更新すること
+```
+graph TD
+    A[app.yaml] --> B[components.yaml]
+    A --> C[lib.yaml]
+    B --> C
+    A --> D[db.yaml]
+    C --> D
+    
+    subgraph "Application Layer"
+        A
+    end
+    
+    subgraph "Component Layer"
+        B
+    end
+    
+    subgraph "Library Layer"
+        C
+    end
+    
+    subgraph "Data Layer"
+        D
+    end
+```
+
+shadcn/uiのインストール方法は以下
+```
+Create project
+Run the init command to create a new Next.js project or to setup an existing one:
+
+npx shadcn@latest init
+Copy
+You can use the -d flag for defaults i.e new-york, zinc and yes for the css variables.
+
+npx shadcn@latest init -d
+```
+
+
+作業が終わったら
+ - app.yaml
+ - components.yaml
+ - lib.yaml
+ - db.yaml
+ - work_history.yaml
+を更新すること
+
+全ての作業が終わったらtest.yamlを更新すること
+test.yamlの内容に従ってテストファイルを作成・実行すること
+テストファイルの結果に従ってコードを修正すること
+
+テストでjestを使うとnextと競合するからjest.config.jsで設定をする

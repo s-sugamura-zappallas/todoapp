@@ -1,0 +1,103 @@
+# コンポーネント定義と依存関係
+components:
+  ui:
+    button.tsx:
+      role: "汎用ボタンコンポーネント"
+      description: "アプリケーション全体で使用するボタン"
+      dependencies:
+        - "@/lib/utils"
+
+    input.tsx:
+      role: "汎用入力フィールド"
+      description: "テキスト入力用コンポーネント"
+      dependencies:
+        - "@/lib/utils"
+
+    checkbox.tsx:
+      role: "チェックボックス"
+      description: "Todo完了状態の切り替えなどに使用"
+      dependencies:
+        - "@/lib/utils"
+
+    dialog.tsx:
+      role: "モーダルダイアログ"
+      description: "確認ダイアログやフォーム表示用"
+      dependencies:
+        - "@/lib/utils"
+
+  todo:
+    todo-list.tsx:
+      role: "Todoリスト表示"
+      description: "Todoアイテムの一覧表示"
+      dependencies:
+        - "@/components/todo/todo-item"
+        - "@/hooks/useTodos"
+        - "@/types/todo"
+
+    todo-item.tsx:
+      role: "Todo個別アイテム"
+      description: "単一のTodoアイテムの表示と操作"
+      dependencies:
+        - "@/components/ui/checkbox"
+        - "@/components/ui/button"
+        - "@/types/todo"
+
+    todo-form.tsx:
+      role: "Todo作成フォーム"
+      description: "新規Todo作成用フォーム"
+      dependencies:
+        - "@/components/ui/input"
+        - "@/components/ui/button"
+        - "@/services/todoService"
+
+    todo-filter.tsx:
+      role: "Todoフィルター"
+      description: "Todo一覧のフィルタリング機能"
+      dependencies:
+        - "@/components/ui/checkbox"
+        - "@/hooks/useTodos"
+
+  layout:
+    header.tsx:
+      role: "ヘッダーコンポーネント"
+      description: "サイト共通ヘッダー"
+      dependencies:
+        - "@/components/ui/button"
+        - "@/services/authService"
+
+    footer.tsx:
+      role: "フッターコンポーネント"
+      description: "サイト共通フッター"
+      dependencies:
+        - "@/lib/utils"
+
+    auth:
+      auth-form.tsx:
+        role: "認証フォーム"
+        description: "ログイン・サインアップ共通フォーム"
+        dependencies:
+          - "@/components/ui/input"
+          - "@/components/ui/button"
+          - "@/services/authService"
+          - "@/lib/utils"
+
+      oauth-buttons.tsx:
+        role: "OAuthボタン群"
+        description: "ソーシャルログインボタン"
+        dependencies:
+          - "@/components/ui/button"
+          - "@/services/authService"
+
+      auth-status.tsx:
+        role: "認証状態表示"
+        description: "現在のログイン状態とユーザー情報の表示"
+        dependencies:
+          - "@/components/ui/avatar"
+          - "@/services/authService"
+
+      protected-route.tsx:
+        role: "保護されたルート"
+        description: "認証が必要なページのラッパーコンポーネント"
+        dependencies:
+          - "@/services/authService"
+          - "@/lib/utils" 

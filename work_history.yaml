@@ -1,0 +1,53 @@
+setup:
+  - プロジェクト初期化:
+    - Next.js (App Router)
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
+  - データベース:
+    - PostgreSQL (Docker)
+    - Prisma ORM
+    - スキーマ定義 (User, Todo)
+
+authentication:
+  - NextAuth.js設定:
+    - Credentials Provider
+    - GitHub Provider
+    - Google Provider
+    - セッション管理
+  - 認証ページ:
+    - ログインページ (/auth/login)
+    - サインアップページ (/auth/signup)
+    - 認証レイアウト
+  - API:
+    - サインアップエンドポイント
+    - 認証エンドポイント
+
+utilities:
+  - 共通関数:
+    - isValidEmail
+    - cn (class名結合) 
+
+- date: 2024-03-21
+  work:
+    - "TodoFilterコンポーネントの実装"
+    - "フィルタリング機能のUI実装"
+    - "型定義ファイルの作成 (types/index.ts)"
+    - "TodoListコンポーネントの実装"
+    - "フィルタリングロジックの実装"
+    - "Todoページコンポーネントの作成"
+    - "Server Actionsの実装 (toggle, delete, create)"
+    - "認証連携の実装"
+    - "NextAuth型定義の拡張"
+    - "TodoFormコンポーネントの実装"
+    - "Todo作成機能の統合"
+    - "タスク履歴機能の実装"
+  changes:
+    - type: feature
+      description: タスクの履歴機能を追加
+      details:
+        - TaskHistoryモデルを追加
+        - タスクの作成・更新・削除時に履歴を記録
+        - 履歴表示コンポーネントを作成
+        - 日時フォーマット用にdate-fnsを追加
+

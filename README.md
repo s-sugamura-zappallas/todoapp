@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Todo App
 
-## Getting Started
+Next.js 13とPrismaを使用したモダンなTodoアプリケーション。
 
-First, run the development server:
+## 機能
+
+- ユーザー認証（NextAuth.js）
+  - GitHub認証
+  - Google認証
+  - メール/パスワード認証
+- Todoの作成、読み取り、更新、削除（CRUD）
+- Todoのフィルタリング（全て、アクティブ、完了済み）
+- レスポンシブデザイン
+
+## ER図
+
+```mermaid
+erDiagram
+    User {
+        String id PK
+        String name
+        String email UK
+        String password
+        DateTime createdAt
+        DateTime updatedAt
+    }
+    Todo {
+        String id PK
+        String title
+        Boolean completed
+        String userId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+    TaskHistory {
+        String id PK
+        String todoId FK
+        String action
+        String title
+        Boolean completed
+        String userId FK
+        DateTime createdAt
+    }
+
+    User ||--o{ Todo : "has"
+    User ||--o{ TaskHistory : "has"
+    Todo ||--o{ TaskHistory : "has"
+```
+
+## シーケンス図
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Client
+    participant Server
+    participant Auth
+    participant DB
+
+    %% 認証フロー
+    User->>Client: アクセス
+    Client->>Server: ページリクエスト
+    Server->>Auth: セッション確認
+    alt 未認証
+        Auth-->>Server: 未認証
+        Server-->>Client: /auth/loginにリダイレクト
+        Client-->>User: ログインページ表示
+    else 認証済み
+        Auth-->>Server: セッション情報
+        Server->>DB: Todoデータ取得
+        DB-->>Server: Todoリスト
+        Server-->>Client: ページ表示
+        Client-->>User: Todoリスト表示
+    end
+
+    %% Todo操作フロー
+    User->>Client: Todo作成
+    Client->>Server: POST /api/todos
+    Server->>Auth: 認証確認
+    Auth-->>Server: OK
+    Server->>DB: Todo保存
+    DB-->>Server: 保存完了
+    Server->>DB: 履歴保存
+    DB-->>Server: 履歴保存完了
+    Server-->>Client: 作成完了
+    Client-->>User: UI更新
+```
+
+## 技術スタック
+
+- フロントエンド
+  - Next.js 13 (App Router)
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+
+- バックエンド
+  - Next.js API Routes
+  - Prisma
+  - PostgreSQL
+  - NextAuth.js
+
+## セットアップ
+
+1. リポジトリのクローン
+
+```bash
+git clone <repository-url>
+cd todo-app
+```
+
+2. 依存関係のインストール
+
+```bash
+npm install
+```
+
+3. 環境変数の設定
+
+```bash
+cp .env.example .env
+# .envファイルを編集して必要な環境変数を設定
+```
+
+4. データベースのセットアップ
+
+```bash
+npx prisma migrate dev
+```
+
+5. 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 環境変数
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# OAuth providers
+GITHUB_ID="your-github-id"
+GITHUB_SECRET="your-github-secret"
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+```
 
-## Learn More
+## ライセンス
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

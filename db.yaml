@@ -1,0 +1,66 @@
+# データベース関連の設定と構造
+prisma:
+  schema.prisma:
+    role: "データベーススキーマ"
+    description: "データモデルとデータベース設定"
+    models:
+      User:
+        fields:
+          - "id: String @id @default(uuid())"
+          - "email: String @unique"
+          - "password: String"
+          - "name: String"
+          - "todos: Todo[]"
+          - "history: TaskHistory[]"
+          - "createdAt: DateTime @default(now())"
+          - "updatedAt: DateTime @updatedAt"
+      
+      Todo:
+        fields:
+          - "id: String @id @default(uuid())"
+          - "title: String"
+          - "completed: Boolean @default(false)"
+          - "userId: String"
+          - "user: User @relation(fields: [userId], references: [id])"
+          - "history: TaskHistory[]"
+          - "createdAt: DateTime @default(now())"
+          - "updatedAt: DateTime @updatedAt"
+        indexes:
+          - fields: [userId]
+
+      TaskHistory:
+        fields:
+          - "id: String @id @default(cuid())"
+          - "todoId: String"
+          - "todo: Todo @relation(fields: [todoId], references: [id])"
+          - "action: String"
+          - "title: String"
+          - "completed: Boolean"
+          - "userId: String"
+          - "user: User @relation(fields: [userId], references: [id])"
+          - "createdAt: DateTime @default(now())"
+        indexes:
+          - fields: [todoId]
+          - fields: [userId]
+
+  migrations:
+    init:
+      role: "初期マイグレーション"
+      description: "データベース初期構造の作成"
+      changes:
+        - "User テーブルの作成"
+        - "基本的なフィールドの設定"
+
+    add_user:
+      role: "ユーザー機能の追加"
+      description: "ユーザー関連フィールドの追加"
+      changes:
+        - "認証関連フィールドの追加"
+        - "ユーザープロフィール情報の追加"
+
+    add_relations:
+      role: "リレーション追加"
+      description: "UserとTodoの関連付け"
+      changes:
+        - "TodoテーブルにuserIdフィールド追加"
+        - "UserとTodoのリレーション設定" 

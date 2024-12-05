@@ -1,0 +1,69 @@
+# ユーティリティ、フック、サービス層の定義
+lib:
+  utils.ts:
+    role: "共通ユーティリティ関数"
+    description: "汎用的なヘルパー関数群"
+    exports:
+      - "classNames"
+      - "formatDate"
+      - "validateInput"
+
+hooks:
+  useTodos.ts:
+    role: "Todo操作カスタムフック"
+    description: "Todoの取得・更新ロジック"
+    dependencies:
+      - "@/services/todoService"
+      - "@/types/todo"
+
+services:
+  todoService.ts:
+    role: "Todoサービス"
+    description: "TodoのCRUD操作とAPI通信"
+    dependencies:
+      - "@/types/todo"
+      - "@/utils/validation"
+      - "@prisma/client"
+
+  authService.ts:
+    role: "認証サービス"
+    description: "ユーザー認証関連の処理"
+    dependencies:
+      - "@/types/auth"
+      - "@/utils/jwt"
+      - "@prisma/client"
+
+utils:
+  jwt.ts:
+    role: "JWT処理"
+    description: "JWTの生成と検証"
+    dependencies:
+      - "jsonwebtoken"
+
+  validation.ts:
+    role: "バリデーション"
+    description: "入力値の検証ロジック"
+    dependencies:
+      - "zod"
+
+types:
+  todo.ts:
+    role: "Todo型定義"
+    description: "Todo関連の型定義"
+    dependencies:
+      - "@prisma/client"
+
+  auth.ts:
+    role: "認証型定義"
+    description: "認証関連の型定義"
+    dependencies:
+      - "@prisma/client"
+
+dependencies:
+  next: "15.0.3"
+  # その他の依存関係...
+
+configurations:
+  swc:
+    enabled: true
+    minify: true 

@@ -1,0 +1,111 @@
+# Directory Structure
+src:
+  app:  # App Routerのルートディレクトリ
+    # ルート
+    layout.tsx      # ルートレイアウト
+    page.tsx        # トップページ
+    error.tsx       # エラーページ
+    loading.tsx     # ローディングUI
+    favicon.ico     # ファビコン
+    
+    # API Routes
+    api:
+      todos:
+        route.ts    # Todo CRUD API
+      auth:
+        route.ts    # 認証 API
+
+    # 認証関連ページ
+    auth:
+      login:
+        page.tsx    # ログインページ
+      signup:
+        page.tsx    # サインアップページ
+      layout.tsx    # 認証ページ共通レイアウト
+
+  components:
+    ui:  # shadcn/uiのコンポーネント
+      - button.tsx
+      - input.tsx
+      - checkbox.tsx
+      - dialog.tsx
+    
+    todo:  # Todoアプリ固有のコンポーネント
+      - todo-list.tsx
+      - todo-item.tsx
+      - todo-form.tsx
+      - todo-filter.tsx
+      - todo-history.tsx
+    
+    layout:  # レイアウト関連のコンポーネント
+      - header.tsx
+      - footer.tsx
+  
+  lib:  # ユーティリティ関数やヘルパー
+    - utils.ts
+
+  types:  # 型定義
+    - todo.ts
+    - auth.ts
+
+  hooks:  # カスタムフック
+    - useTodos.ts
+
+  styles:  # スタイル関連
+    - globals.css
+
+  services:  # サービス層
+    - todoService.ts
+    - authService.ts
+
+  utils:  # ユーティリティ
+    - jwt.ts
+    - validation.ts
+
+  config:  # 設定
+    - env.ts
+    - aws.ts
+    - auth.ts
+
+prisma:  # Prisma関連
+  - schema.prisma
+  migrations:
+    - [timestamp]_init
+    - [timestamp]_add_user
+    - [timestamp]_add_relations
+
+# デプロイメント関連
+deploy:
+  aws:
+    - Dockerfile
+    - docker-compose.yml
+    - .dockerignore
+    ecs:
+      - task-definition.json
+      - service-definition.json
+    terraform:  # インフラストラクチャ as Code
+      - main.tf
+      - variables.tf
+      - outputs.tf
+      modules:
+        - vpc
+        - ecs
+        - rds
+        - cloudfront
+    scripts:
+      - deploy.sh
+      - build.sh
+      - migrate.sh
+
+dependencies:
+  frontend:
+    - next
+    - react
+    - react-dom
+    - next-auth
+    - date-fns
+  backend:
+    - prisma
+    - @prisma/client
+    - @auth/prisma-adapter
+    - bcryptjs
